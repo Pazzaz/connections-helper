@@ -1,0 +1,321 @@
+names = [
+    "ocean",
+    "deep ocean",
+    "warm ocean",
+    "lukewarm ocean",
+    "deep lukewarm ocean",
+    "cold ocean",
+    "deep cold ocean",
+    "frozen ocean",
+    "deep frozen ocean",
+    "mushroom fields",
+    "jagged peaks",
+    "frozen peaks",
+    "stony peaks",
+    "meadow",
+    "cherry grove",
+    "grove",
+    "snowy slopes",
+    "windswept hills",
+    "windswept gravelly hills",
+    "windswept forest",
+    "forest",
+    "flower forest",
+    "taiga",
+    "old growth pine taiga",
+    "old growth spruce taiga",
+    "snowy taiga",
+    "birch forest",
+    "old growth birch forest",
+    "dark forest",
+    "pale garden",
+    "jungle",
+    "sparse jungle",
+    "bamboo jungle",
+    "river",
+    "frozen river",
+    "swamp",
+    "mangrove swamp",
+    "beach",
+    "snowy beach",
+    "stony shore",
+    "plains",
+    "sunflower plains",
+    "snowy plains",
+    "ice spikes",
+    "desert",
+    "savanna",
+    "savanna plateau",
+    "windswept savanna",
+    "badlands",
+    "wooded badlands",
+    "eroded badlands",
+    "deep dark",
+    "dripstone caves",
+    "lush caves",
+    "the void",
+    "nether wastes",
+    "soul sand valley",
+    "crimson forest",
+    "warped forest",
+    "basalt deltas",
+    "the end",
+    "small end islands",
+    "end midlands",
+    "end highlands",
+    "end barrens",
+]
+
+[props]
+offshore-biomes = [
+    "ocean",
+    "deep ocean",
+    "warm ocean",
+    "lukewarm ocean",
+    "deep lukewarm ocean",
+    "cold ocean",
+    "deep cold ocean",
+    "frozen ocean",
+    "deep frozen ocean",
+    "mushroom fields",
+]
+
+highland-biomes = [
+    "jagged peaks",
+    "frozen peaks",
+    "stony peaks",
+    "meadow",
+    "cherry grove",
+    "grove",
+    "snowy slopes",
+    "windswept hills",
+    "windswept gravelly hills",
+    "windswept forest",
+]
+
+woodland-biomes = [
+    "forest",
+    "flower forest",
+    "taiga",
+    "old growth pine taiga",
+    "old growth spruce taiga",
+    "snowy taiga",
+    "birch forest",
+    "old growth birch forest",
+    "dark forest",
+    "pale garden",
+    "jungle",
+    "sparse jungle",
+    "bamboo jungle",
+]
+
+wetland-biomes = [
+    "river",
+    "frozen river",
+    "swamp",
+    "mangrove swamp",
+    "beach",
+    "snowy beach",
+    "stony shore",
+]
+
+flatland-biomes = [
+    "plains",
+    "sunflower plains",
+    "snowy plains",
+    "ice spikes",
+]
+
+arid-land-biomes = [
+    "desert",
+    "savanna",
+    "savanna plateau",
+    "windswept savanna",
+    "badlands",
+    "wooded badlands",
+    "eroded badlands",
+]
+
+cave-biomes = [
+    "deep dark",
+    "dripstone caves",
+    "lush caves",
+]
+
+void-biomes = ["the void"]
+
+nether-biomes = [
+    "nether wastes",
+    "soul sand valley",
+    "crimson forest",
+    "warped forest",
+    "basalt deltas",
+]
+
+end-biomes = [
+    "the end",
+    "small end islands",
+    "end midlands",
+    "end highlands",
+    "end barrens",
+]
+
+armadillo-spawn = [
+    "badlands",
+    "eroded badlands",
+    "wooded badlands",
+    "savanna",
+    "savanna plateau",
+    "windswept savanna",
+]
+
+rabbit-spawn = [
+    "flower forest",
+    "old growth pine taiga",
+    "old growth spruce taiga",
+    "snowy slopes",
+    "snowy taiga",
+    "taiga",
+    "grove",
+    "ice spikes",
+    "snowy plains",
+    "desert",
+    "cherry grove",
+    "meadow",
+]
+
+wolf-spawn = [
+    "grove",
+    "sparse jungle",
+    "forest",
+    "old growth pine taiga",
+    "old growth spruce taiga",
+    "snowy taiga",
+    "taiga",
+    "wooded badlands",
+    "savanna plateau",
+]
+
+village-spawn = [
+    "desert",
+    "plains",
+    "meadow",
+    "savanna",
+    "snowy plains",
+    "taiga",
+]
+
+pillager-spawn = [
+    "desert",
+    "plains",
+    "meadow",
+    "grove",
+    "snowy slopes",
+    "jagged peaks",
+    "frozen peaks",
+    "stony peaks",
+    "savanna",
+    "snowy plains",
+    "taiga",
+    "cherry grove",
+]
+
+trail-ruins-spawn = [
+    "jungle",
+    "old growth birch forest",
+    "old growth pine taiga",
+    "old growth spruce taiga",
+    "snowy taiga",
+    "taiga",
+]
+
+forested = [
+    "forest",
+    "birch forest",
+    "old growth birch forest",
+    "dark forest",
+    "pale garden",
+    "flower forest",
+    "windswept forest",
+    "crimson forest",
+    "warped forest",
+    "swamp",
+    "mangrove swamp",
+    "jungle",
+    "bamboo jungle",
+    "taiga",
+    "snowy taiga",
+    "old growth pine taiga",
+    "old growth spruce taiga",
+    "grove",
+    "cherry grove",
+    "wooded badlands",
+]
+
+shipwreck-spawn = [
+    "ocean",
+    "deep ocean",
+    "warm ocean",
+    "lukewarm ocean",
+    "deep lukewarm ocean",
+    "cold ocean",
+    "deep cold ocean",
+    "frozen ocean",
+    "deep frozen ocean",
+    "beach",
+    "snowy beach",
+]
+
+ocean-monument-spawn = [
+    "deep ocean",
+    "deep frozen ocean",
+    "deep cold ocean",
+    "deep lukewarm ocean",
+]
+
+drowned-spawn = [
+    "river",
+    "dripstone caves",
+    "warm ocean",
+    "deep lukewarm ocean",
+    "cold ocean",
+    "deep frozen ocean",
+    "deep cold ocean",
+    "deep ocean",
+    "lukewarm ocean",
+    "frozen ocean",
+    "ocean",
+    "frozen river",
+]
+
+tropical-fish-spawn = [
+    "mangrove swamp",
+    "lukewarm ocean",
+    "deep lukewarm ocean",
+    "warm ocean",
+    "lush caves",
+]
+
+salmon-spawn = [
+    "river",
+    "frozen river",
+    "cold ocean",
+    "deep cold ocean",
+    "frozen ocean",
+    "deep frozen ocean",
+]
+
+fallen-tree-spawn = [
+    "meadow",
+    "bamboo jungle",
+    "river",
+    "grove",
+    "flower forest",
+]
+
+vines-spawn = [
+    "lush caves",
+    "jungle",
+    "bamboo jungle",
+    "sparse jungle",
+]

@@ -1,0 +1,8 @@
+[package]
+name = "connections-helper"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+toml = "0.9.10"
+z3 = { version = "0.19.6", features = ["gh-release"] }
