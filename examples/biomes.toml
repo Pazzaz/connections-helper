@@ -319,3 +319,75 @@ vines-spawn = [
     "bamboo jungle",
     "sparse jungle",
 ]
+
+[limits]
+avoid-grouping = [
+    [
+        "jagged peaks",
+        "frozen peaks",
+        "stony peaks",
+    ],
+    [
+        "jungle",
+        "sparse jungle",
+        "bamboo jungle",
+    ],
+    [
+        "windswept hills",
+        "windswept gravelly hills",
+        "windswept forest",
+    ],
+    [
+        "savanna",
+        "savanna plateau",
+        "windswept savanna",
+    ],
+    [
+        "badlands",
+        "wooded badlands",
+        "eroded badlands",
+    ],
+    [
+        "taiga",
+        "old growth pine taiga",
+        "old growth spruce taiga",
+        "snowy taiga",
+    ],
+    [
+        "windswept forest",
+        "forest",
+        "flower forest",
+        "birch forest",
+        "old growth birch forest",
+        "dark forest",
+    ],
+    [
+        "beach",
+        "snowy beach",
+    ],
+    [
+        "ocean",
+        "deep ocean",
+        "warm ocean",
+        "lukewarm ocean",
+        "deep lukewarm ocean",
+        "cold ocean",
+        "deep cold ocean",
+        "frozen ocean",
+        "deep frozen ocean",
+    ],
+    [
+        "plains",
+        "sunflower plains",
+        "snowy plains",
+    ],
+    [
+        "river",
+        "frozen river",
+    ],
+]
+
+ignore-group = [
+    "end-biomes",
+    "nether-biomes",
+]

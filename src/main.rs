@@ -10,6 +10,8 @@ const BIOMES: &str = include_str!("../examples/biomes.toml");
 struct Data {
     names: Vec<String>,
     props: Vec<(String, Vec<usize>)>,
+    avoid_grouping: Vec<Vec<usize>>,
+    ignore_groups: Vec<usize>,
 }
 
 fn create_data() -> Data {
@@ -44,7 +46,64 @@ fn create_data() -> Data {
 
     props.sort();
 
-    Data { names, props }
+    let (avoid_grouping, ignore_groups) =
+        if let Some(limits) = table.get("limits").map(|x| x.as_table().unwrap()) {
+            let mut avoid_grouping: Vec<Vec<usize>> = limits
+                .get("avoid-grouping")
+                .unwrap()
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|x| {
+                    let mut res: Vec<usize> = x
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|x| {
+                            let name = x.as_str().unwrap();
+                            if let Ok(x) = names.binary_search_by_key(&name, |x| x) {
+                                x
+                            } else {
+                                panic!(r#"name "{}" not found"#, name);
+                            }
+                        })
+                        .collect();
+                    res.sort();
+                    res
+                })
+                .collect();
+
+            avoid_grouping.sort();
+
+            let mut ignore_groups: Vec<usize> = limits
+                .get("ignore-group")
+                .unwrap()
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|x| {
+                    let name = x.as_str().unwrap();
+                    if let Ok(x) = props.binary_search_by_key(&name, |x| &x.0) {
+                        x
+                    } else {
+                        panic!(r#"name "{}" not found"#, name);
+                    }
+                })
+                .collect();
+
+            ignore_groups.sort();
+
+            (avoid_grouping, ignore_groups)
+        } else {
+            (Vec::new(), Vec::new())
+        };
+
+    Data {
+        names,
+        props,
+        avoid_grouping,
+        ignore_groups,
+    }
 }
 
 fn exactly<'a, I: IntoIterator<Item = &'a Bool> + Clone>(args: I, k: u32) -> Bool {
@@ -75,14 +134,7 @@ fn main() {
     let data = create_data();
 
     let name_variables: Vec<Bool> = data.names.iter().map(|s| Bool::fresh_const(s)).collect();
-    let group_variables: Vec<(Bool, &Vec<usize>)> = data
-        .props
-        .iter()
-        .map(|s| {
-            let group = Bool::fresh_const(&s.0);
-            (group, &s.1)
-        })
-        .collect();
+    let group_variables: Vec<Bool> = data.props.iter().map(|s| Bool::fresh_const(&s.0)).collect();
 
     // For the ith name, which groups is it in
     let groups_of_names: Vec<Vec<&Bool>> = (0..data.names.len())
@@ -90,7 +142,7 @@ fn main() {
             let mut out = Vec::new();
             for j in 0..data.props.len() {
                 if data.props[j].1.contains(&i) {
-                    out.push(&group_variables[j].0);
+                    out.push(&group_variables[j]);
                 }
             }
             out
@@ -102,8 +154,10 @@ fn main() {
 
     for i in 0..group_variables.len() {
         for j in 0..i {
-            let (name_i, members_i) = &group_variables[i];
-            let (name_j, members_j) = &group_variables[j];
+            let name_i = &group_variables[i];
+            let members_i = &data.props[i].1;
+            let name_j = &group_variables[j];
+            let members_j = &data.props[j].1;
 
             let inter = intersection(members_i, members_j);
             pairwise.push((name_i, name_j, inter));
@@ -130,21 +184,43 @@ fn main() {
     }
 
     // If we include a group, then we include exactly four of it's members
-    for group in &group_variables {
-        let has_four = exactly(group.1.iter().map(|&x| &name_variables[x]), 4);
-        solver.assert(group.0.implies(has_four));
+    for (i, group) in group_variables.iter().enumerate() {
+        let members = &data.props[i].1;
+        let has_four = exactly(members.iter().map(|&x| &name_variables[x]), 4);
+        solver.assert(group.implies(has_four));
+    }
+
+    // Groups can't be active together with any pair of members that we're avoiding
+    // grouping together.
+    for (i, group) in group_variables.iter().enumerate() {
+        let members = &data.props[i].1;
+        for avoid in &data.avoid_grouping {
+            let inter = intersection(members, avoid);
+            for p in 0..inter.len() {
+                for q in 0..p {
+                    let a = inter[p];
+                    let b = inter[q];
+                    let bool_a = &name_variables[a];
+                    let bool_b = &name_variables[b];
+                    solver.assert(Bool::and(&[group, bool_a, bool_b]).not());
+                }
+            }
+        }
+    }
+
+    // We don't choose a group that we're ignoring
+    for ignored in data.ignore_groups {
+        solver.assert(group_variables[ignored].not());
     }
 
     // We have 16 in total
     solver.assert(exactly(name_variables.iter(), 16));
 
-    let only_group_variables: Vec<Bool> = group_variables.into_iter().map(|x| x.0).collect();
-
-    let res = solver.check();
-    println!("{:?}", res);
+    // let res = solver.check();
+    // println!("{:?}", res);
 
     for (name_solution, group_solution) in solver
-        .solutions((&name_variables, &only_group_variables), false)
+        .solutions((&name_variables, &group_variables), false)
         .take(10)
     {
         let values: Vec<bool> = group_solution
