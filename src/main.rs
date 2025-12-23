@@ -12,6 +12,7 @@ struct Data {
     props: Vec<(String, Vec<usize>)>,
     avoid_grouping: Vec<Vec<usize>>,
     ignore_groups: Vec<usize>,
+    include_groups: Vec<usize>,
 }
 
 fn create_data() -> Data {
@@ -46,7 +47,7 @@ fn create_data() -> Data {
 
     props.sort();
 
-    let (avoid_grouping, ignore_groups) =
+    let (avoid_grouping, ignore_groups, include_groups) =
         if let Some(limits) = table.get("limits").map(|x| x.as_table().unwrap()) {
             let mut avoid_grouping: Vec<Vec<usize>> = limits
                 .get("avoid-grouping")
@@ -77,25 +78,47 @@ fn create_data() -> Data {
 
             let mut ignore_groups: Vec<usize> = limits
                 .get("ignore-group")
-                .unwrap()
-                .as_array()
-                .unwrap()
-                .iter()
                 .map(|x| {
-                    let name = x.as_str().unwrap();
-                    if let Ok(x) = props.binary_search_by_key(&name, |x| &x.0) {
-                        x
-                    } else {
-                        panic!(r#"name "{}" not found"#, name);
-                    }
+                    x.as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|x| {
+                            let name = x.as_str().unwrap();
+                            if let Ok(x) = props.binary_search_by_key(&name, |x| &x.0) {
+                                x
+                            } else {
+                                panic!(r#"name "{}" not found"#, name);
+                            }
+                        })
+                        .collect()
                 })
-                .collect();
+                .unwrap_or_default();
 
             ignore_groups.sort();
 
-            (avoid_grouping, ignore_groups)
+            let mut include_groups: Vec<usize> = limits
+                .get("include-group")
+                .map(|x| {
+                    x.as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|x| {
+                            let name = x.as_str().unwrap();
+                            if let Ok(x) = props.binary_search_by_key(&name, |x| &x.0) {
+                                x
+                            } else {
+                                panic!(r#"name "{}" not found"#, name);
+                            }
+                        })
+                        .collect()
+                })
+                .unwrap_or_default();
+
+            include_groups.sort();
+
+            (avoid_grouping, ignore_groups, include_groups)
         } else {
-            (Vec::new(), Vec::new())
+            (Vec::new(), Vec::new(), Vec::new())
         };
 
     Data {
@@ -103,6 +126,7 @@ fn create_data() -> Data {
         props,
         avoid_grouping,
         ignore_groups,
+        include_groups,
     }
 }
 
@@ -211,6 +235,11 @@ fn main() {
     // We don't choose a group that we're ignoring
     for ignored in data.ignore_groups {
         solver.assert(group_variables[ignored].not());
+    }
+
+    // We choose a group we're including
+    for included in data.include_groups {
+        solver.assert(&group_variables[included]);
     }
 
     // We have 16 in total

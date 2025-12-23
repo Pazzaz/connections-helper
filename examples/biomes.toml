@@ -320,6 +320,35 @@ vines-spawn = [
     "sparse jungle",
 ]
 
+yellow-grass = [
+    "desert",
+    "savanna",
+    "savanna plateau",
+    "windswept savanna",
+    "nether wastes",
+    "soul sand valley",
+    "crimson forest",
+    "warped forest",
+    "basalt deltas",
+]
+
+no-rain = [
+    "the end",
+    "nether wastes",
+    "soul sand valley",
+    "crimson forest",
+    "warped forest",
+    "basalt deltas",
+    "the void",
+    "savanna plateau",
+    "savanna",
+    "windswept savanna",
+    "desert",
+    "eroded badlands",
+    "wooded badlands",
+    "badlands",
+]
+
 [limits]
 avoid-grouping = [
     [
@@ -385,9 +414,43 @@ avoid-grouping = [
         "river",
         "frozen river",
     ],
+    [
+        "cherry grove",
+        "grove",
+    ],
+    [
+        "windswept forest",
+        "forest",
+        "flower forest",
+        "birch forest",
+        "old growth birch forest",
+        "dark forest",
+        "crimson forest",
+        "warped forest",
+    ],
+    [
+        "old growth pine taiga",
+        "old growth spruce taiga",
+        "old growth birch forest",
+    ],
+    [
+        "swamp",
+        "mangrove swamp",
+    ],
+    [
+        "snowy slopes",
+        "snowy taiga",
+        "snowy beach",
+        "snowy plains",
+    ],
 ]
 
 ignore-group = [
-    "end-biomes",
-    "nether-biomes",
+    # "end-biomes",
+    # "nether-biomes",
+    "woodland-biomes",
+]
+
+include-group = [
+    "no-rain",
 ]
