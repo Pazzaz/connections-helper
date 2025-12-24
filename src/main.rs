@@ -1,6 +1,6 @@
 use toml::Table;
 use z3::{
-    Solver,
+    Solvable, Solver,
     ast::{Bool, atleast, atmost},
 };
 
@@ -233,12 +233,12 @@ fn main() {
     }
 
     // We don't choose a group that we're ignoring
-    for ignored in data.ignore_groups {
+    for &ignored in &data.ignore_groups {
         solver.assert(group_variables[ignored].not());
     }
 
     // We choose a group we're including
-    for included in data.include_groups {
+    for &included in &data.include_groups {
         solver.assert(&group_variables[included]);
     }
 
@@ -248,38 +248,68 @@ fn main() {
     // let res = solver.check();
     // println!("{:?}", res);
 
-    for (name_solution, group_solution) in solver
-        .solutions((&name_variables, &group_variables), false)
-        .take(10)
-    {
-        let values: Vec<bool> = group_solution
-            .iter()
-            .map(|x| x.as_bool().unwrap())
-            .collect();
-        let chosen_groups: Vec<usize> = data
-            .props
-            .iter()
-            .enumerate()
-            .filter(|(i, _)| values[*i])
-            .map(|x| x.0)
-            .collect();
-        debug_assert!(chosen_groups.is_sorted());
+    loop {
+        match solver.check() {
+            z3::SatResult::Sat => {
+                // Get the variables
+                let model = solver.get_model().unwrap();
+                let (name_solution, group_solution) = (&name_variables, &group_variables)
+                    .read_from_model(&model, false)
+                    .unwrap();
 
-        let values: Vec<bool> = name_solution.iter().map(|x| x.as_bool().unwrap()).collect();
-        let chosen_names: Vec<usize> = data
-            .names
-            .iter()
-            .enumerate()
-            .filter(|(i, _)| values[*i])
-            .map(|x| x.0)
-            .collect();
-        debug_assert!(chosen_names.is_sorted());
+                // Print the solution
+                print_solution(&data, &name_solution, &group_solution);
 
-        println!("GROUPS: ");
-        for i in &chosen_groups {
-            let including = intersection(&chosen_names, &data.props[*i].1);
-            let including_names: Vec<&String> = including.iter().map(|x| &data.names[*x]).collect();
-            println!("{}: {:?} ", data.props[*i].0, including_names);
+                // Assert different groups
+                let same: Vec<Bool> = group_solution
+                    .iter()
+                    .zip(&group_variables)
+                    .map(|(solution, variable)| {
+                        if solution.as_bool().unwrap_or(false) {
+                            variable.clone()
+                        } else {
+                            variable.not()
+                        }
+                    })
+                    .collect();
+                solver.assert(Bool::and(&same).not());
+            }
+            z3::SatResult::Unsat => {
+                println!("Unsat");
+                break;
+            }
+            z3::SatResult::Unknown => {
+                println!("Unknown");
+                break;
+            }
         }
     }
+}
+
+fn print_solution(data: &Data, name_solution: &[Bool], group_solution: &[Bool]) {
+    let values: Vec<bool> = group_solution
+        .iter()
+        .map(|x| x.as_bool().unwrap_or(false))
+        .collect();
+    let chosen_groups: Vec<usize> = data
+        .props
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| values[*i])
+        .map(|x| x.0)
+        .collect();
+    debug_assert!(chosen_groups.is_sorted());
+
+    let values: Vec<bool> = name_solution.iter().map(|x| x.as_bool().unwrap()).collect();
+    let chosen_names: Vec<usize> = data
+        .names
+        .iter()
+        .enumerate()
+        .filter(|(i, _)| values[*i])
+        .map(|x| x.0)
+        .collect();
+    debug_assert!(chosen_names.is_sorted());
+
+    let group_names: Vec<&String> = chosen_groups.iter().map(|i| &data.props[*i].0).collect();
+    println!("GROUPS: {:?}", group_names);
 }
